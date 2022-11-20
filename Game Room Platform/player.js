@@ -2,9 +2,11 @@ class Player extends Sprite {
     constructor({
         collisionBlocks = [],
         imageSrc,
-        frameRate
+        frameRate,
+        animations,
+        loop
     }) {
-        super({imageSrc, frameRate})
+        super({imageSrc, frameRate, animations, loop})
         this.position = {
             x: 200,
             y: 200,
@@ -22,6 +24,7 @@ class Player extends Sprite {
         this.gravity = 1
 
         this.collisionBlocks = collisionBlocks
+
     }
 
     update() {
@@ -30,8 +33,38 @@ class Player extends Sprite {
         this.checkForHorizontalCollisions()
         this.applyGravity() 
         this.updateHitBox()
-        // c.fillRect(this.hitbox.position.x, this.hitbox.position.y, this.hitbox.width, this.hitbox.height)
         this.checkForVerticalCollisions()
+    }
+
+    swithSprite(name) {
+        if (this.image === this.animations[name].image) return
+        this.currentFrame = 0
+        this.image = this.animations[name].image
+        this.frameRate = this.animations[name].frameRate
+        this.frameBuffer = this.animations[name].frameBuffer
+        this.loop = this.animations[name].loop
+        this.currentAnimation = this.animations[name]
+    }
+
+    handleInput(keys) {
+        if (this.preventInput) return
+
+        this.velocity.x = 0
+        if (keys.a.pressed) {
+            this.swithSprite('runLeft')
+            this.velocity.x = -4
+            this.lastDirection = 'left'
+        } else if (keys.d.pressed) {
+            this.swithSprite('runRight')
+            this.velocity.x = 4
+            this.lastDirection = 'right'
+        } else {
+            if (this.lastDirection === 'right') {
+                this.swithSprite('idleRight')
+            } else {
+                this.swithSprite('idleLeft')
+            }
+        }
     }
 
     updateHitBox () {
@@ -87,7 +120,6 @@ class Player extends Sprite {
                 this.hitbox.position.y + this.hitbox.height >= collisionBlock.position.y &&
                 this.hitbox.position.y <= collisionBlock.position.y + collisionBlock.height
                 ) {
-                    // coll on x axis on the left side
                 if (this.velocity.x < -0) {
                     const offSet = this.hitbox.position.x - this.position.x
                     this.position.x = collisionBlock.position.x + collisionBlock.width - offSet + 0.01

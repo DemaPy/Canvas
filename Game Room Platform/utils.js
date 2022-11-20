@@ -15,7 +15,7 @@ Array.prototype.createObjectsFrom2D = function () {
 
     this.forEach((element, y) => {
         element.forEach((item, x) => {
-            if (item ===292) {
+            if (item === 292 || item === 250) {
                 objects.push( 
                     new CollisionBlock({
                         position: {
