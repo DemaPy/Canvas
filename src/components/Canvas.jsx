@@ -1,18 +1,9 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import { RoughCanvas } from "roughjs/bin/canvas";
 import rough from "roughjs/bundled/rough.esm";
-
-const figures = {
-  line: "line",
-  rectangle: "rectangle",
-  circle: "circle",
-  selection: "selection",
-};
-
-const modes = {
-  drawing: "drawing",
-  release: "release",
-};
+import { figures } from "../utils/figures";
+import { modes } from "../utils/modes";
+import Tools from "./Tools/Tools";
 
 const generator = rough.generator();
 
@@ -42,10 +33,10 @@ function difference(a, b) {
 }
 
 function isItemUndercoordinates(x, y, item) {
-  const x1 = item.options[0]
-  const x2 = item.options[2]
-  const y1 = item.options[1]
-  const y2 = item.options[3]
+  const x1 = item.options[0];
+  const x2 = item.options[2];
+  const y1 = item.options[1];
+  const y2 = item.options[3];
   const rangeX = difference(x1, x2);
   const rangeY = difference(y1, y2);
   if (item.type === figures.rectangle) {
@@ -56,12 +47,7 @@ function isItemUndercoordinates(x, y, item) {
     const maxY = Math.max(y1, y2);
     return x >= minX && x <= maxX && y >= minY && y <= maxY;
   }
-  return (
-    x >= x1 &&
-    x <= x2 &&
-    y >= y1 &&
-    y <= y2
-  );
+  return x >= x1 && x <= x2 && y >= y1 && y <= y2;
 }
 
 function getElementUnderCursor({ x, y, elements }) {
@@ -145,103 +131,3 @@ export const Canvas = () => {
     </div>
   );
 };
-
-function Tools({ onSelect, item }) {
-  return (
-    <div
-      style={{
-        background: "white",
-        display: "flex",
-        flexDirection: "column",
-        gap: "1rem",
-        padding: "0.4rem",
-        borderRadius: "0.4rem",
-        position: "fixed",
-        left: "1rem",
-        top: "50%",
-        transform: "translateY(-50%)",
-      }}
-    >
-      <Line
-        isActive={item === figures.line}
-        onClick={() => onSelect(figures.line)}
-      />
-      <Rectangle
-        isActive={item === figures.rectangle}
-        onClick={() => onSelect(figures.rectangle)}
-      />
-      <Circle
-        isActive={item === figures.circle}
-        onClick={() => onSelect(figures.circle)}
-      />
-      <Selection
-        isActive={item === figures.selection}
-        onClick={() => onSelect(figures.selection)}
-      />
-    </div>
-  );
-}
-
-function Line({ onClick, isActive }) {
-  return (
-    <button
-      style={{
-        background: isActive ? "#ececec" : "#404040",
-        color: !isActive ? "#ececec" : "#404040",
-        width: "3rem",
-        height: "3rem",
-      }}
-      onClick={onClick}
-    >
-      L
-    </button>
-  );
-}
-
-function Rectangle({ onClick, isActive }) {
-  return (
-    <button
-      style={{
-        background: isActive ? "#ececec" : "#404040",
-        color: !isActive ? "#ececec" : "#404040",
-        width: "3rem",
-        height: "3rem",
-      }}
-      onClick={onClick}
-    >
-      R
-    </button>
-  );
-}
-
-function Circle({ onClick, isActive }) {
-  return (
-    <button
-      style={{
-        background: isActive ? "#ececec" : "#404040",
-        color: !isActive ? "#ececec" : "#404040",
-        width: "3rem",
-        height: "3rem",
-      }}
-      onClick={onClick}
-    >
-      C
-    </button>
-  );
-}
-
-function Selection({ onClick, isActive }) {
-  return (
-    <button
-      style={{
-        background: isActive ? "#ececec" : "#404040",
-        color: !isActive ? "#ececec" : "#404040",
-        width: "3rem",
-        height: "3rem",
-      }}
-      onClick={onClick}
-    >
-      S
-    </button>
-  );
-}
